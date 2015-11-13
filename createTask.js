@@ -27,12 +27,15 @@ module.exports = function (jobId, taskIndex) {
 
     registerUsage = function (fullUsage) {
         var ev = {
-            startTime: fullEvent.startTime,
-            endTime: fullEvent.endTime,
-            maximumMemoryUsage: fullEvent.maximumMemoryUsage,
-            meanLocalDiskSpaceUsed: fullEvent.meanLocalDiskSpaceUsed,
-            sampledCpuUsage: fullEvent.sampledCpuUsage
+            startTime: fullUsage.startTime,
+            endTime: fullUsage.endTime,
+            maximumMemoryUsage: fullUsage.maximumMemoryUsage,
+            meanLocalDiskSpaceUsed: fullUsage.meanLocalDiskSpaceUsed,
+            sampledCpuUsage: fullUsage.sampledCpuUsage
         };
+
+        console.log("fullUsage");
+        console.log(fullUsage);
 
         updateUsages.push(ev);
     };

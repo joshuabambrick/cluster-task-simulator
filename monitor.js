@@ -1,7 +1,7 @@
 var _ = require("underscore");
 
 module.exports = (function () {
-    var update, printReservations, initReservation,
+    var update, printData, initReservation,
         taskTrackers = {},
         decayRate = 0.05, safetyMargin = 1.1,
         calcNewReservation;
@@ -17,9 +17,13 @@ module.exports = (function () {
                 mostRecentUsage = curTask.getMostRecentUsage();
 
             if (taskTracker && mostRecentUsage && mostRecentUsage.startTime > taskTracker.lastEventTime) {
+                taskTracker.lastEventTime = mostRecentUsage.startTime;
                 taskTracker.reservations.cpuReservation = calcNewReservation(mostRecentUsage.sampledCpuUsage, taskTracker.limits.cpuLimit);
                 taskTracker.reservations.memoryReservation = calcNewReservation(mostRecentUsage.maximumMemoryUsage, taskTracker.limits.memoryLimit);
                 taskTracker.reservations.diskSpaceReservation = calcNewReservation(mostRecentUsage.meanLocalDiskSpaceUsed, taskTracker.limits.diskSpaceLimit);
+
+                console.log("DROPPED RESERVATION:");
+                console.log(taskTracker);
             }
         });
     };
@@ -30,28 +34,28 @@ module.exports = (function () {
             taskTrackers[taskProp] = {
                 lastEventTime: mostRecentEvent.time,
                 reservations: {
-                    cpuReservation: mostRecentEvent.cpuReservation,
-                    memoryReservation: mostRecentEvent.memoryReservation,
-                    diskSpaceReservation: mostRecentEvent.diskSpaceReservation
+                    cpuReservation: mostRecentEvent.cpuRequest,
+                    memoryReservation: mostRecentEvent.memoryRequest,
+                    diskSpaceReservation: mostRecentEvent.diskSpaceRequest
                 },
                 limits: {
-                    cpuLimit: mostRecentEvent.cpuReservation,
-                    memoryLimit: mostRecentEvent.memoryReservation,
-                    diskSpaceLimit: mostRecentEvent.diskSpaceReservation
+                    cpuLimit: mostRecentEvent.cpuRequest,
+                    memoryLimit: mostRecentEvent.memoryRequest,
+                    diskSpaceLimit: mostRecentEvent.diskSpaceRequest
                 }
             };
         }
         return taskTrackers[taskProp];
     };
 
-    printReservations = function () {
+    printData = function () {
         _.each(taskTrackers, function (curTracker) {
-            console.log(curTracker.reservations);
+            console.log(curTracker);
         });
     };
 
     return {
         update: update,
-        printReservations: printReservations
+        printData: printData
     };
 }());

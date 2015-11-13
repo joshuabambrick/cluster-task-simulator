@@ -82,9 +82,9 @@ app.all("/", upload.fields([
                     if (!isEventsFile && curLineNo % 500 === 0) {
                         if (curLineNo % 5000 === 0) {
                             console.log("===");
+                            // monitor.printData();
                         }
                         monitor.update(taskSet.getTasks());
-                        monitor.printReservations();
                     }
 
                     callback();
